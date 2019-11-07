@@ -191,4 +191,7 @@
     <string name="face_enrolling_close_to_continue">Fold phone during setup</string>
     <string name="face_enrolling_close_to_continue_description">The phone must be folded to set up or use Face Unlock</string>
     <string name="face_enrolling_do_it_later">Do it later</string>
+    <!-- Three-fingers-swipe to screenshot -->
+    <string name="three_finger_gesture">Swipe to screenshot</string>
+    <string name="three_finger_gesture_summary">Swipe down with three fingers to take a screenshot</string>
 </resources>
