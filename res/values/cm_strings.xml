@@ -204,4 +204,10 @@
     <string name="double_tap_title">Double tap</string>
     <string name="doze_double_tap_title">Double tap to check phone</string>
     <string name="doze_double_tap_summary">Pulse notifications by a double tap</string>
+
+    <!-- Default getTimeSpentInApp string for Wellbeing to display. [CHAR LIMIT=NONE] --> 
+    <string name="duration_less_than_one_minute">Less than 1 Minute</string> 
+
+    <!-- Summary for Wellbeing screen time usage. [CHAR LIMIT=NONE] -->
+    <string name="screen_time_summary_usage_today">%1$s today</string>
 </resources>
