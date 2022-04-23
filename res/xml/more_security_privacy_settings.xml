@@ -249,4 +249,12 @@
                 android:targetPackage="com.google.attestation.verifier" />
     </Preference>
 
+    <lineageos.preference.GlobalSettingSwitchPreference
+        android:order="92"
+        android:key="window_ignore_secure"
+        android:title="@string/ignore_window_secure_title"
+        android:summary="@string/ignore_window_secure_summary"
+        android:defaultValue="false"/>
+
+
 </PreferenceScreen>
