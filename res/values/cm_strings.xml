@@ -205,4 +205,10 @@
     <!-- Ignore window secure -->
     <string name="ignore_window_secure_title">Ignore window secure flags</string>
     <string name="ignore_window_secure_summary">Remove the screenshots and screenrecords limits for all applications. Can be convenient in some cases but may lead to privacy leaks. Need to restart applications for the change to take effect.</string>
+
+    <!-- Ambient wake toggles -->
+    <string name="doze_gesture_ambient_title">Show Ambient</string>
+    <string name="doze_gesture_ambient_summary">Show Ambient Display instead of fully waking the screen up</string>
+    <string name="gesture_wake_ambient">Show Ambient</string>
+    <string name="gesture_wake">Fully wake</string>
 </resources>
