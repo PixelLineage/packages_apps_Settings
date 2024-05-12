@@ -42,7 +42,8 @@ open class SearchFeatureProviderImpl : SearchFeatureProvider {
         val isSettingsPackage = callerPackage == context.packageName
         if (isSettingsPackage ||
             callerPackage == getSettingsIntelligencePkgName(context) ||
-            isSignatureAllowlisted(context, callerPackage)) {
+            isSignatureAllowlisted(context, callerPackage)) ||
+            "com.google.android.apps.nexuslauncher".equals(callerPackage) {
             return
         }
         throw SecurityException(
