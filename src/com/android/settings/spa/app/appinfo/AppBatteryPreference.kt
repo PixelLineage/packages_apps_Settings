@@ -37,6 +37,7 @@ import com.android.settings.core.SubSettingLauncher
 import com.android.settings.fuelgauge.AdvancedPowerUsageDetail
 import com.android.settings.fuelgauge.batteryusage.BatteryChartPreferenceController
 import com.android.settings.fuelgauge.batteryusage.BatteryDiffEntry
+import com.android.settings.fuelgauge.PowerBackgroundUsageDetail
 import com.android.settingslib.spa.widget.preference.Preference
 import com.android.settingslib.spa.widget.preference.PreferenceModel
 import com.android.settingslib.spaprivileged.model.app.installed
@@ -141,7 +142,7 @@ private class AppBatteryPresenter(private val context: Context, private val app:
             AdvancedPowerUsageDetail.EXTRA_UID to app.uid,
         )
         SubSettingLauncher(context)
-            .setDestination(AdvancedPowerUsageDetail::class.java.name)
+            .setDestination(PowerBackgroundUsageDetail::class.java.name)
             .setTitleRes(R.string.battery_details_title)
             .setArguments(args)
             .setUserHandle(app.userHandle)
