@@ -58,8 +58,7 @@ public class ManageStoragePreferenceController extends BasePreferenceController 
 
     @Override
     public int getAvailabilityStatus() {
-        return canHandleManageStorageIntent(mContext, mUserId)
-                ? AVAILABLE : CONDITIONALLY_UNAVAILABLE;
+        return UNSUPPORTED_ON_DEVICE;
     }
 
     @Override
