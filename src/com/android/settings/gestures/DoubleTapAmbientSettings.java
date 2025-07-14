@@ -42,6 +42,6 @@ public class DoubleTapAmbientSettings extends SettingsPreferenceFragment impleme
 
     @Override
     public int getMetricsCategory() {
-        return MetricsEvent.CLOVER;
+        return MetricsEvent.VIEW_UNKNOWN;
     }
 }
