@@ -53,7 +53,7 @@ public class ManageStoragePreferenceController extends BasePreferenceController 
 
     @Override
     public int getAvailabilityStatus() {
-        return UNSUPPORTED_ON_DEVICE;
+        return mManageStorageDrawable == null ? CONDITIONALLY_UNAVAILABLE : AVAILABLE;
     }
 
     @Override
