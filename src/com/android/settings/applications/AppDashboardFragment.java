@@ -31,6 +31,12 @@ import com.android.settings.search.BaseSearchIndexProvider;
 import com.android.settings.widget.PreferenceCategoryController;
 import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.search.SearchIndexable;
+import android.os.SystemProperties;
+import android.widget.Toast;
+import androidx.preference.Preference;
+import androidx.preference.SwitchPreferenceCompat;
+import android.content.pm.PackageManager;
+import static android.os.UserHandle.USER_SYSTEM;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -94,6 +100,40 @@ public class AppDashboardFragment extends DashboardFragment {
         final HibernatedAppsPreferenceController hibernatedAppsPreferenceController =
                 use(HibernatedAppsPreferenceController.class);
         getSettingsLifecycle().addObserver(hibernatedAppsPreferenceController);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        final Preference pref = findPreference("persist_revan_mod");
+        if (pref instanceof SwitchPreferenceCompat) {
+            final SwitchPreferenceCompat toggle = (SwitchPreferenceCompat) pref;
+            boolean currentValue = SystemProperties.getBoolean("persist.sys.revan.mod", true);
+            toggle.setChecked(currentValue);
+            toggle.setOnPreferenceChangeListener((p, newVal) -> {
+                boolean enabled = (Boolean) newVal;
+                SystemProperties.set("persist.sys.revan.mod", enabled ? "true" : "false");
+
+                // Uninstall updates if any
+                PackageManager pm = getContext().getPackageManager();
+                String[] targets = {
+                        "com.google.android.youtube",
+                        "com.google.android.apps.youtube.music"
+                };
+
+                for (String pkg : targets) {
+                    pm.deletePackageAsUser(pkg, null, 0, USER_SYSTEM);
+                }
+
+                Toast.makeText(
+                        getContext(),
+                        R.string.revan_restart_to_apply,
+                        Toast.LENGTH_SHORT
+                ).show();
+                return true;
+            });
+        }
     }
 
     @VisibleForTesting

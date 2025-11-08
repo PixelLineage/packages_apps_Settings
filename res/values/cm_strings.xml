@@ -221,4 +221,9 @@
     <!-- Battery saver refresh rate -->
     <string name="battery_saver_refresh_rate_title">Reduce refresh rate</string>
     <string name="battery_saver_refresh_rate_summary">Use 60 Hz screen refresh rate to save power when Battery Saver is on</string>
+
+    <!-- ReVanced -->
+    <string name="revan_toggle_title">ReVanced Integration</string>
+    <string name="revan_toggle_summary">Use ReVanced variants of YouTube and YT Music instead of stock apps</string>
+    <string name="revan_restart_to_apply">Restart to apply changes</string>
 </resources>
