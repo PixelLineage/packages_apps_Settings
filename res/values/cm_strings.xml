@@ -226,4 +226,10 @@
     <string name="revan_toggle_title">ReVanced Integration</string>
     <string name="revan_toggle_summary">Use ReVanced variants of YouTube and YT Music instead of stock apps</string>
     <string name="revan_restart_to_apply">Restart to apply changes</string>
+
+    <!-- Locale Picker -->
+    <string name="clear_search_query_description">Clear query</string>
+    <string name="language_picker_page">Language picker page</string>
+    <string name="search_region">Search regions</string>
+    <string name="search_region_page">Search region page</string>
 </resources>
