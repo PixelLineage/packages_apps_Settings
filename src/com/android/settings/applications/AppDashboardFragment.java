@@ -18,10 +18,16 @@ package com.android.settings.applications;
 
 import android.app.settings.SettingsEnums;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.PowerManager;
+import android.os.SystemProperties;
 import android.provider.SearchIndexableResource;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.preference.Preference;
+import androidx.preference.SwitchPreferenceCompat;
 
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.settings.R;
@@ -31,11 +37,7 @@ import com.android.settings.search.BaseSearchIndexProvider;
 import com.android.settings.widget.PreferenceCategoryController;
 import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.search.SearchIndexable;
-import android.os.SystemProperties;
-import android.widget.Toast;
-import androidx.preference.Preference;
-import androidx.preference.SwitchPreferenceCompat;
-import android.content.pm.PackageManager;
+
 import static android.os.UserHandle.USER_SYSTEM;
 
 import java.util.ArrayList;
@@ -50,6 +52,12 @@ public class AppDashboardFragment extends DashboardFragment {
     private static final String TAG = "AppDashboardFragment";
     private static final String ADVANCED_CATEGORY_KEY = "advanced_category";
     private static final String ASPECT_RATIO_PREF_KEY = "aspect_ratio_apps";
+    private static final String REVAN_PREF_KEY = "persist_revan_mod";
+    private static final String REVAN_PROP = "persist.sys.revan.mod";
+    private static final String[] REVAN_PACKAGES = {
+            "com.google.android.youtube",
+            "com.google.android.apps.youtube.music"
+    };
     private AppsPreferenceController mAppsPreferenceController;
 
     private static List<AbstractPreferenceController> buildPreferenceControllers(Context context) {
@@ -106,34 +114,32 @@ public class AppDashboardFragment extends DashboardFragment {
     public void onStart() {
         super.onStart();
 
-        final Preference pref = findPreference("persist_revan_mod");
+        final Preference pref = findPreference(REVAN_PREF_KEY);
         if (pref instanceof SwitchPreferenceCompat) {
             final SwitchPreferenceCompat toggle = (SwitchPreferenceCompat) pref;
-            boolean currentValue = SystemProperties.getBoolean("persist.sys.revan.mod", true);
-            toggle.setChecked(currentValue);
+            toggle.setChecked(SystemProperties.getBoolean(REVAN_PROP, true));
             toggle.setOnPreferenceChangeListener((p, newVal) -> {
-                boolean enabled = (Boolean) newVal;
-                SystemProperties.set("persist.sys.revan.mod", enabled ? "true" : "false");
-
-                // Uninstall updates if any
-                PackageManager pm = getContext().getPackageManager();
-                String[] targets = {
-                        "com.google.android.youtube",
-                        "com.google.android.apps.youtube.music"
-                };
-
-                for (String pkg : targets) {
-                    pm.deletePackageAsUser(pkg, null, 0, USER_SYSTEM);
-                }
-
-                Toast.makeText(
-                        getContext(),
-                        R.string.revan_restart_to_apply,
-                        Toast.LENGTH_SHORT
-                ).show();
-                return true;
+                showRevanRestartDialog(toggle, (Boolean) newVal);
+                return false;
             });
         }
+    }
+
+    private void showRevanRestartDialog(SwitchPreferenceCompat toggle, boolean enabled) {
+        new AlertDialog.Builder(getContext())
+                .setTitle(R.string.revan_restart_dialog_title)
+                .setMessage(R.string.revan_restart_dialog_message)
+                .setPositiveButton(R.string.revan_restart_now, (dialog, which) -> {
+                    toggle.setChecked(enabled);
+                    SystemProperties.set(REVAN_PROP, String.valueOf(enabled));
+                    final PackageManager pm = getContext().getPackageManager();
+                    for (String pkg : REVAN_PACKAGES) {
+                        pm.deletePackageAsUser(pkg, null, 0, USER_SYSTEM);
+                    }
+                    getContext().getSystemService(PowerManager.class).reboot(null);
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
     }
 
     @VisibleForTesting
