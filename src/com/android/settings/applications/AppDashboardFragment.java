@@ -18,6 +18,7 @@ package com.android.settings.applications;
 
 import android.app.settings.SettingsEnums;
 import android.content.Context;
+import android.content.pm.IPackageDeleteObserver;
 import android.content.pm.PackageManager;
 import android.os.PowerManager;
 import android.os.SystemProperties;
@@ -43,6 +44,7 @@ import static android.os.UserHandle.USER_SYSTEM;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /** Settings page for apps. */
 // LINT.IfChange
@@ -130,16 +132,40 @@ public class AppDashboardFragment extends DashboardFragment {
                 .setTitle(R.string.revan_restart_dialog_title)
                 .setMessage(R.string.revan_restart_dialog_message)
                 .setPositiveButton(R.string.revan_restart_now, (dialog, which) -> {
+                    final Context context = requireContext().getApplicationContext();
                     toggle.setChecked(enabled);
-                    SystemProperties.set(REVAN_PROP, String.valueOf(enabled));
-                    final PackageManager pm = getContext().getPackageManager();
-                    for (String pkg : REVAN_PACKAGES) {
-                        pm.deletePackageAsUser(pkg, null, 0, USER_SYSTEM);
+                    if (enabled) {
+                        uninstallUpdatesThenEnable(context);
+                    } else {
+                        SystemProperties.set(REVAN_PROP, "false");
+                        reboot(context);
                     }
-                    getContext().getSystemService(PowerManager.class).reboot(null);
                 })
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
+    }
+
+    private void uninstallUpdatesThenEnable(Context context) {
+        // Keep the property false while PackageManager restores stock system package paths.
+        final PackageManager pm = context.getPackageManager();
+        final AtomicInteger pendingDeletes = new AtomicInteger(REVAN_PACKAGES.length);
+        final IPackageDeleteObserver observer = new IPackageDeleteObserver.Stub() {
+            @Override
+            public void packageDeleted(String packageName, int returnCode) {
+                if (pendingDeletes.decrementAndGet() == 0) {
+                    SystemProperties.set(REVAN_PROP, "true");
+                    reboot(context);
+                }
+            }
+        };
+
+        for (String pkg : REVAN_PACKAGES) {
+            pm.deletePackageAsUser(pkg, observer, 0, USER_SYSTEM);
+        }
+    }
+
+    private void reboot(Context context) {
+        context.getSystemService(PowerManager.class).reboot(null);
     }
 
     @VisibleForTesting
